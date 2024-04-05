@@ -37,8 +37,7 @@ android {
 
 dependencies {
 
-    implementation("com.github.pwittchen:weathericonview:1.1.0")
-
+    implementation("com.caverock:androidsvg:1.4")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -59,16 +59,12 @@
             tools:ignore="MissingConstraints"
             android:layout_weight="1"/>
 
-        <com.github.pwittchen.weathericonview.WeatherIconView
-            android:id="@+id/weatherIcon"
+        <ImageView
+            android:id="@+id/weatherImageView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            custom:weatherIconResource="@string/wi_day_sunny_overcast"
-            custom:weatherIconColor="@android:color/black"
-            custom:weatherIconSize="100"
             android:layout_weight="2"
-            android:textAlignment="center"/>
-
+            android:src="@drawable/nodata"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"

@@ -1,19 +1,16 @@
 package com.example.weatherapp
 
 import MyPagerAdapter
-import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.viewpager.widget.ViewPager
-
+import androidx.viewpager2.widget.ViewPager2
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewPager: ViewPager
-
+    private lateinit var viewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,26 +22,23 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-
         viewPager = findViewById(R.id.viewPager)
-        val adapter = MyPagerAdapter(supportFragmentManager)
+        val adapter = MyPagerAdapter(this)
         viewPager.adapter = adapter
-        viewPager.currentItem = 1
+        viewPager.setCurrentItem(1, false)
 
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
-
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> {
+                    }
+                    1 -> {
 
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
+                    }
+                    2 -> {
+                    }
+                }
             }
         })
-
-
     }
-
-
 }

@@ -1,6 +1,8 @@
 package com.example.weatherapp
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.drawable.PictureDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,6 +39,7 @@ class FragmentTodayWeather : Fragment() {
     private lateinit var timeTextView: TextView
     private lateinit var searchButton: Button
     private lateinit var searchEditText: TextInputEditText
+    private lateinit var sharedPreferences: SharedPreferences
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -53,22 +56,20 @@ class FragmentTodayWeather : Fragment() {
         timeTextView = view.findViewById(R.id.timeTextView)
         weatherImageView = view.findViewById(R.id.weatherImageView)
 
-
         searchButton = view.findViewById(R.id.searchButton)
         searchEditText = view.findViewById(R.id.searchEditText)
+
+        searchButton.setOnClickListener {
+            val city = searchEditText.text.toString()
+            val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
+            val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey"
+            WeatherTask().execute(apiUrl)
+        }
 
         val defaultCity = "Warsaw"
         val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
         val defaultApiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$defaultCity&appid=$apiKey"
-
-
         WeatherTask().execute(defaultApiUrl)
-
-        searchButton.setOnClickListener {
-            val city = searchEditText.text.toString()
-            val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey"
-            WeatherTask().execute(apiUrl)
-        }
 
         return view
     }
@@ -117,9 +118,17 @@ class FragmentTodayWeather : Fragment() {
 
 
 
+                sharedPreferences = requireContext().getSharedPreferences("WeatherPreferences", Context.MODE_PRIVATE)
+                val currentUnit = sharedPreferences.getString("temperatureUnit", "Kelvin")
+                val tempInCelsius = if (currentUnit == "Kelvin") {
+                    temp - 273.15
+                } else {
+                    temp
+                }
+                val temperatureValue = tempInCelsius.toInt()
+                val temperatureUnit = if (currentUnit == "Kelvin") "K" else "°C"
+                val formattedTemp = "$temperatureValue$temperatureUnit"
 
-                val tempInCelsius = temp - 273.15
-                val formattedTemp = "${tempInCelsius.toInt()}°C"
                 val formattedCoord = "Longitude: $lon, Latitude: $lat"
                 val formattedWeather = "Weather: $description"
                 val formattedPressure = "Pressure: $pressure hPa"
@@ -144,6 +153,7 @@ class FragmentTodayWeather : Fragment() {
                     "mist" -> R.drawable.mist
                     "light rain" -> R.drawable.little_rain
                     "light intensity shower rain" -> R.drawable.little_rain
+                    "overcast clouds" -> R.drawable.cloud
                     else -> R.drawable.nodata
                 }
                 weatherImageView.setImageResource(icon)

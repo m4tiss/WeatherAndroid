@@ -5,15 +5,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
-
-
-    <TextView
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/settingsTextView"
-        android:text="Ustawienia"
-        tools:ignore="MissingConstraints"
-        />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingsTextView"
+            android:text="SETTINGS"
+            android:textSize="42sp"
+            tools:ignore="MissingConstraints"
+            android:layout_weight="2"
+            />
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/settings"
+            android:layout_weight="2"/>
 
+    </LinearLayout>
+
+
+    <RadioGroup
+        android:id="@+id/unitRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="40dp">
+
+        <RadioButton
+            android:id="@+id/kelvinRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:checked="true"
+            android:text="Kelvins" />
+
+        <RadioButton
+            android:id="@+id/celsiusRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:text="Celsius" />
+
+    </RadioGroup>
 
 </LinearLayout>

@@ -18,6 +18,7 @@ import java.net.URL
 class FragmentTodayWeather : Fragment() {
 
     private lateinit var temperatureTextView: TextView
+    private lateinit var cityTextView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,6 +27,7 @@ class FragmentTodayWeather : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_today_weather, container, false)
         temperatureTextView = view.findViewById(R.id.temperatureTextView)
+        cityTextView = view.findViewById(R.id.cityTextView)
 
         val city = "London"
         val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
@@ -47,7 +49,8 @@ class FragmentTodayWeather : Fragment() {
                     }
                     handleResponse(response)
                 } catch (e: IOException) {
-                    temperatureTextView.text = "Błąd podczas pobierania danych"
+                    cityTextView.text = "-"
+                    temperatureTextView.text = "-"
                 }
             }
         }
@@ -57,13 +60,15 @@ class FragmentTodayWeather : Fragment() {
                 val jsonObj = JSONObject(response)
                 val main = jsonObj.getJSONObject("main")
                 val temp = main.getDouble("temp") // temperatura w kelwinach
+                val city = jsonObj.getString("name")
 
                 // Przekształć temperaturę na stopnie Celsiusza
                 val tempInCelsius = temp - 273.15
-
-                temperatureTextView.text = "Temperatura w Londynie: ${tempInCelsius.toInt()}°C"
+                cityTextView.text = city.toString()
+                temperatureTextView.text = "${tempInCelsius.toInt()}°C"
             } catch (e: Exception) {
-                temperatureTextView.text = "Błąd podczas przetwarzania danych"
+                cityTextView.text = "-"
+                temperatureTextView.text = "-"
             }
         }
     }

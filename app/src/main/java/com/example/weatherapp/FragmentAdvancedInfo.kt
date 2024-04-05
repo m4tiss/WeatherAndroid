@@ -15,7 +15,7 @@ class FragmentAdvancedInfo : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_today_weather, container, false)
+        val view = inflater.inflate(R.layout.fragment_advanced_info, container, false)
 
         return view
     }

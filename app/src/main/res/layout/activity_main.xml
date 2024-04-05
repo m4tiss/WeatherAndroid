@@ -11,30 +11,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-        <EditText
-            android:id="@+id/searchEditText"
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:gravity="center"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:hint="Wyszukiwarka"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <FrameLayout
-            android:id="@+id/fragmentTodayContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3" />
-
-
-        <FrameLayout
-            android:id="@+id/fragmentAdvancedInfo"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"/>
+            android:layout_height="match_parent"/>
 
 
     </LinearLayout>

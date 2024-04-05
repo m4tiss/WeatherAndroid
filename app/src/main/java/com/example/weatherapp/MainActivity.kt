@@ -1,19 +1,20 @@
 package com.example.weatherapp
 
+import MyPagerAdapter
 import android.annotation.SuppressLint
-import android.os.AsyncTask
 import android.os.Bundle
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.viewpager.widget.ViewPager
 
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var viewPager: ViewPager
 
-    @SuppressLint("MissingInflatedId")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -25,20 +26,22 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
+        viewPager = findViewById(R.id.viewPager)
+        val adapter = MyPagerAdapter(supportFragmentManager)
+        viewPager.adapter = adapter
+        viewPager.currentItem = 1
 
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
 
-        val fragmentTodayWeather = FragmentTodayWeather()
-        val fragmentAdvancedInfo = FragmentAdvancedInfo()
+            override fun onPageSelected(position: Int) {
 
+            }
 
-        fragmentTransaction.add(R.id.fragmentTodayContainer, fragmentTodayWeather)
-        fragmentTransaction.add(R.id.fragmentAdvancedInfo, fragmentAdvancedInfo)
-
-
-        fragmentTransaction.commit()
-
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+        })
 
 
     }

@@ -8,17 +8,38 @@
     android:gravity="center">
 
 
-    <com.google.android.material.textfield.TextInputEditText
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:padding="20sp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
-        android:hint="City name"
-        android:background="@drawable/rounded_corner_background"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchEditText"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:hint="City name"
+            android:padding="20sp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/rounded_corner_background" />
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="Search"
+            android:textSize="15sp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:onClick="onSearchButtonClick" />
+
+    </LinearLayout>
 
 
     <LinearLayout

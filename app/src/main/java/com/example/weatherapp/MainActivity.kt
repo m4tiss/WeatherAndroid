@@ -1,11 +1,15 @@
 package com.example.weatherapp
 
 import MyPagerAdapter
+import UnitViewModel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +24,12 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        with(sharedPreferences.edit()) {
+            putString("unit", "metric")
+            apply()
         }
 
         viewPager = findViewById(R.id.viewPager)

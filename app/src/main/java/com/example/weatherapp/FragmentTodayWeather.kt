@@ -1,5 +1,6 @@
 package com.example.weatherapp
 
+import UnitViewModel
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,6 +14,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.caverock.androidsvg.SVG
 import com.caverock.androidsvg.SVGParseException
 import com.google.android.material.textfield.TextInputEditText
@@ -41,6 +45,10 @@ class FragmentTodayWeather : Fragment() {
     private lateinit var searchEditText: TextInputEditText
     private lateinit var sharedPreferences: SharedPreferences
 
+    private var city: String = "Warsaw"
+
+    private lateinit var unitViewModel: UnitViewModel
+
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +56,12 @@ class FragmentTodayWeather : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_today_weather, container, false)
+
+
+        unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
+
+
+
         temperatureTextView = view.findViewById(R.id.temperatureTextView)
         cityTextView = view.findViewById(R.id.cityTextView)
         coordinatesTextView = view.findViewById(R.id.coordinatesTextView)
@@ -59,16 +73,27 @@ class FragmentTodayWeather : Fragment() {
         searchButton = view.findViewById(R.id.searchButton)
         searchEditText = view.findViewById(R.id.searchEditText)
 
+
         searchButton.setOnClickListener {
-            val city = searchEditText.text.toString()
+            val unit = unitViewModel.unit.value ?: "metric"
+            city = searchEditText.text.toString()
             val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
-            val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey"
+            val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=$unit"
             WeatherTask().execute(apiUrl)
         }
 
-        val defaultCity = "Warsaw"
+        unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->
+            val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
+            val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=$unit"
+            WeatherTask().execute(apiUrl)
+        })
+
+        unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
+        unitViewModel.setUnit("metric")
+
+        val unit = unitViewModel.unit.value ?: "metric"
         val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
-        val defaultApiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$defaultCity&appid=$apiKey"
+        val defaultApiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=$unit"
         WeatherTask().execute(defaultApiUrl)
 
         return view
@@ -99,7 +124,7 @@ class FragmentTodayWeather : Fragment() {
                 val jsonObj = JSONObject(response)
                 val main = jsonObj.getJSONObject("main")
                 val temp = main.getDouble("temp") // temperatura w kelwinach
-                val city = jsonObj.getString("name")
+                city = jsonObj.getString("name")
                 val coord = jsonObj.getJSONObject("coord")
                 val lon = coord.getDouble("lon")
                 val lat = coord.getDouble("lat")
@@ -118,15 +143,9 @@ class FragmentTodayWeather : Fragment() {
 
 
 
-                sharedPreferences = requireContext().getSharedPreferences("WeatherPreferences", Context.MODE_PRIVATE)
-                val currentUnit = sharedPreferences.getString("temperatureUnit", "Kelvin")
-                val tempInCelsius = if (currentUnit == "Kelvin") {
-                    temp - 273.15
-                } else {
-                    temp
-                }
-                val temperatureValue = tempInCelsius.toInt()
-                val temperatureUnit = if (currentUnit == "Kelvin") "K" else "°C"
+                val currentUnit = unitViewModel.unit.value ?: "metric"
+                val temperatureValue = temp.toInt()
+                val temperatureUnit = if (currentUnit == "standard") "K" else "°C"
                 val formattedTemp = "$temperatureValue$temperatureUnit"
 
                 val formattedCoord = "Longitude: $lon, Latitude: $lat"

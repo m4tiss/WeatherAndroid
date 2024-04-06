@@ -1,5 +1,6 @@
 package com.example.weatherapp
 
+import UnitViewModel
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -9,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 
 class FragmentSettings : Fragment() {
@@ -16,6 +19,7 @@ class FragmentSettings : Fragment() {
     private lateinit var unitRadioGroup: RadioGroup
     private lateinit var kelvinRadioButton: RadioButton
     private lateinit var celsiusRadioButton: RadioButton
+    private lateinit var unitViewModel: UnitViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,26 +32,26 @@ class FragmentSettings : Fragment() {
         kelvinRadioButton = view.findViewById(R.id.kelvinRadioButton)
         celsiusRadioButton = view.findViewById(R.id.celsiusRadioButton)
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val currentUnit = sharedPreferences.getString("temperatureUnit", "Kelvin")
 
-        if (currentUnit == "Kelvin") {
-            kelvinRadioButton.isChecked = true
-        } else {
-            celsiusRadioButton.isChecked = true
-        }
+        unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
+
+        unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->
+            if (unit == "standard") {
+                kelvinRadioButton.isChecked = true
+            } else {
+                celsiusRadioButton.isChecked = true
+            }
+        })
 
         unitRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            val editor = sharedPreferences.edit()
             when (checkedId) {
                 R.id.kelvinRadioButton -> {
-                    editor.putString("temperatureUnit", "Kelvin")
+                    unitViewModel.setUnit("standard")
                 }
                 R.id.celsiusRadioButton -> {
-                    editor.putString("temperatureUnit", "Celsius")
+                    unitViewModel.setUnit("metric")
                 }
             }
-            editor.apply()
         }
 
 

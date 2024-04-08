@@ -13,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/settingsTextView"
+            android:textColor="@color/black"
             android:text="SETTINGS"
             android:textSize="42sp"
             tools:ignore="MissingConstraints"
@@ -39,6 +40,7 @@
             android:id="@+id/kelvinRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:gravity="center"
             android:textSize="30sp"
             android:checked="true"
@@ -48,6 +50,7 @@
             android:id="@+id/celsiusRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:gravity="center"
             android:textSize="30sp"
             android:text="Celsius" />

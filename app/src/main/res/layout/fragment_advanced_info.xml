@@ -8,10 +8,97 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/advancedTextView"
+        android:textSize="30sp"
+        android:textColor="@color/purple_500"
+        android:gravity="center"
         android:text="Advanced info"
-        tools:ignore="MissingConstraints"
-        android:layout_weight="4"/>
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="2">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textSize="25sp"
+                android:id="@+id/windTextView"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:text="Wind"
+                android:layout_weight="2"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textSize="18sp"
+                android:id="@+id/windSpeedTextView"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:text="Speed: -"
+                android:layout_weight="2"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textSize="18sp"
+                android:id="@+id/windDegTextView"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:text="Degree: -"
+                android:layout_weight="2"/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/windImageView"
+            android:src="@drawable/wind"
+            android:padding="30sp"
+            android:layout_weight="2"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/visibilityImageView"
+            android:layout_weight="1"
+            android:padding="30sp"
+            android:src="@drawable/novisibility"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/visibilityTextView"
+            android:gravity="center"
+            android:text="Visibility\n-"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/humidityTextView"
+        android:textSize="40sp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:text="Humidity: -"
+        android:layout_weight="2"/>
+
+
 
 </LinearLayout>

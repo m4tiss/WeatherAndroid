@@ -1,10 +1,8 @@
 package com.example.weatherapp
 
+import CityViewModel
 import UnitViewModel
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.SharedPreferences
-import android.graphics.drawable.PictureDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +10,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.caverock.androidsvg.SVG
-import com.caverock.androidsvg.SVGParseException
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,7 +22,6 @@ import org.json.JSONObject
 import java.io.IOException
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
@@ -43,11 +36,10 @@ class FragmentTodayWeather : Fragment() {
     private lateinit var timeTextView: TextView
     private lateinit var searchButton: Button
     private lateinit var searchEditText: TextInputEditText
-    private lateinit var sharedPreferences: SharedPreferences
-
-    private var city: String = "Warsaw"
 
     private lateinit var unitViewModel: UnitViewModel
+
+    private lateinit var cityViewModel: CityViewModel
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -59,7 +51,7 @@ class FragmentTodayWeather : Fragment() {
 
 
         unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
-
+        cityViewModel = ViewModelProvider(requireActivity()).get(CityViewModel::class.java)
 
 
         temperatureTextView = view.findViewById(R.id.temperatureTextView)
@@ -75,36 +67,29 @@ class FragmentTodayWeather : Fragment() {
 
 
         searchButton.setOnClickListener {
-            val unit = unitViewModel.unit.value ?: "metric"
-            city = searchEditText.text.toString()
-            val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
-            val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=$unit"
-            WeatherTask().execute(apiUrl)
+            cityViewModel.setCity(searchEditText.text.toString())
+            WeatherTask().execute()
         }
 
         unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->
-            val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
-            val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=$unit"
-            WeatherTask().execute(apiUrl)
+            WeatherTask().execute()
         })
 
-        unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
-        unitViewModel.setUnit("metric")
-
-        val unit = unitViewModel.unit.value ?: "metric"
-        val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
-        val defaultApiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=$unit"
-        WeatherTask().execute(defaultApiUrl)
+        WeatherTask().execute()
 
         return view
     }
 
     inner class WeatherTask {
-        fun execute(url: String) {
+
+        private var apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
+        private var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=${cityViewModel.city.value}&appid=$apiKey&units=${unitViewModel.unit.value}"
+
+        fun execute() {
             GlobalScope.launch(Dispatchers.Main) {
                 try {
                     val response = withContext(Dispatchers.IO) {
-                        URL(url).readText()
+                        URL(apiUrl).readText()
                     }
                     handleResponse(response)
                 } catch (e: IOException) {
@@ -123,8 +108,9 @@ class FragmentTodayWeather : Fragment() {
             try {
                 val jsonObj = JSONObject(response)
                 val main = jsonObj.getJSONObject("main")
-                val temp = main.getDouble("temp") // temperatura w kelwinach
-                city = jsonObj.getString("name")
+                val temp = main.getDouble("temp")
+                cityViewModel.setCity(jsonObj.getString("name"))
+               // city = jsonObj.getString("name")
                 val coord = jsonObj.getJSONObject("coord")
                 val lon = coord.getDouble("lon")
                 val lat = coord.getDouble("lat")
@@ -153,7 +139,7 @@ class FragmentTodayWeather : Fragment() {
                 val formattedPressure = "Pressure: $pressure hPa"
                 val formattedTime = "Local Time: $sdfTime"
 
-                cityTextView.text = city
+                cityTextView.text = cityViewModel.city.value
                 temperatureTextView.text = formattedTemp
                 coordinatesTextView.text = formattedCoord
                 weatherTextView.text = formattedWeather

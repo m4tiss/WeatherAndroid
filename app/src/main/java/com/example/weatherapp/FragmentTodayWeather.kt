@@ -123,7 +123,7 @@ class FragmentTodayWeather : Fragment() {
                 val currentTimeUTC = System.currentTimeMillis() / 1000
                 val localTime = currentTimeUTC + timezoneOffset
 
-                val sdf = SimpleDateFormat("HH:mm:ss yyyy-MM-dd ", Locale.getDefault())
+                val sdf = SimpleDateFormat("HH:mm:ss dd-MM-yyyy", Locale.getDefault())
                 sdf.timeZone = TimeZone.getTimeZone("UTC")
                 val sdfTime = sdf.format(localTime * 1000)
 

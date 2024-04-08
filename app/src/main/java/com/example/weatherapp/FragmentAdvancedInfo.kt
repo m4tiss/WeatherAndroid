@@ -108,9 +108,6 @@ class FragmentAdvancedInfo : Fragment() {
 
                 val formattedVisibility = "Visibility\n$visibility"
 
-                Log.d("FragmentAdvancedInfo", "windSpeedTextView: ${windSpeedTextView.id}")
-                Log.d("FragmentAdvancedInfo", "windDegTextView: ${windDegTextView.id}")
-
 
                 windSpeedTextView.text = formattedWindSpeed
                 windDegTextView.text = formattedWindDegree
@@ -133,7 +130,6 @@ class FragmentAdvancedInfo : Fragment() {
 
                 visibilityImageView.setImageResource(icon_visibility)
 
-                println("Działa wszytsko")
             } catch (e: Exception) {
                 windSpeedTextView.text = "Speed: -"
                 windDegTextView.text = "Degree: -"
@@ -141,7 +137,6 @@ class FragmentAdvancedInfo : Fragment() {
                 humidityTextView.text = "Humidity: -"
                 windImageView.setImageResource(R.drawable.nodata)
                 visibilityImageView.setImageResource(R.drawable.nodata)
-                println(e.message)
 
             }
         }

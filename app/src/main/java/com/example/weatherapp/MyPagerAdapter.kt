@@ -1,10 +1,9 @@
+package com.example.weatherapp
+
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.weatherapp.FragmentAdvancedInfo
-import com.example.weatherapp.FragmentNextDays
-import com.example.weatherapp.FragmentSettings
-import com.example.weatherapp.FragmentTodayWeather
+
 
 class MyPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 

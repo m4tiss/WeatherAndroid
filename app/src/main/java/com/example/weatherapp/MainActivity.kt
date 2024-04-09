@@ -1,6 +1,5 @@
 package com.example.weatherapp
 
-import MyPagerAdapter
 import UnitViewModel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -43,7 +42,6 @@ class MainActivity : AppCompatActivity() {
                     0 -> {
                     }
                     1 -> {
-
                     }
                     2 -> {
                     }

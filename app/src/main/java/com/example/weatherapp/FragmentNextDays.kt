@@ -38,12 +38,14 @@ class FragmentNextDays : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val list: MutableList<WeatherData> = ArrayList()
-        weatherAdapter = WeatherAdapter(list)
-        recyclerView.adapter = weatherAdapter
-
         unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
         cityViewModel = ViewModelProvider(requireActivity()).get(CityViewModel::class.java)
+
+
+        val list: MutableList<WeatherData> = ArrayList()
+        weatherAdapter = WeatherAdapter(list,unitViewModel)
+        recyclerView.adapter = weatherAdapter
+
 
         cityViewModel.city.observe(viewLifecycleOwner, Observer { city ->
             fetchWeatherData(city)
@@ -78,13 +80,17 @@ class FragmentNextDays : Fragment() {
             val jsonObj = JSONObject(response)
             val list = jsonObj.getJSONArray("list")
 
-            val weatherDataList = mutableListOf<WeatherData>()
+            data class WeatherEntry(val dateTime: Date, val weatherData: WeatherData)
+
+            val sortedWeatherEntries = mutableListOf<WeatherEntry>()
 
             for (i in 0 until list.length()) {
                 val forecastObj = list.getJSONObject(i)
-                val dateTime = forecastObj.getString("dt_txt")
+                val dateTimeString = forecastObj.getString("dt_txt")
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                val date = inputFormat.parse(dateTimeString)
 
-                if (dateTime.contains("12:00:00")) {
+                if (date != null && dateTimeString.endsWith("12:00:00")) {
                     val mainObj = forecastObj.getJSONObject("main")
                     val weatherArray = forecastObj.getJSONArray("weather")
                     val weatherObj = weatherArray.getJSONObject(0)
@@ -99,17 +105,21 @@ class FragmentNextDays : Fragment() {
                         val iconBitmap = downloadBitmapFromUrl(weatherIconUrl)
 
                         withContext(Dispatchers.Main) {
-                            val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                             val outputFormat = SimpleDateFormat("HH:mm dd-MM-yyyy", Locale.getDefault())
-                            val date = inputFormat.parse(dateTime)
                             val formattedDate = outputFormat.format(date)
                             val feelsLike = mainObj.getDouble("feels_like").toInt()
                             val pressure = mainObj.getInt("pressure")
 
                             val weatherData = WeatherData(temperature, iconBitmap, formattedDate, feelsLike, pressure)
-                            weatherDataList.add(weatherData)
+                            sortedWeatherEntries.add(WeatherEntry(date, weatherData))
 
-                            weatherAdapter.setData(weatherDataList)
+                            if (sortedWeatherEntries.size == list.length() / 8) {
+                                sortedWeatherEntries.sortBy { it.dateTime }
+
+                                val sortedWeatherDataList = sortedWeatherEntries.map { it.weatherData }
+
+                                weatherAdapter.setData(sortedWeatherDataList.toMutableList())
+                            }
                         }
                     }
                 }
@@ -118,6 +128,8 @@ class FragmentNextDays : Fragment() {
             e.printStackTrace()
         }
     }
+
+
 
     private fun downloadBitmapFromUrl(url: String): Bitmap? {
         return try {

@@ -1,5 +1,7 @@
 package com.example.weatherapp
 
+import CityViewModel
+import UnitViewModel
 import WeatherData
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -7,9 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 
-class WeatherAdapter(private val weatherDataList: MutableList<WeatherData>) :
+private lateinit var unitViewModel: UnitViewModel
+
+class WeatherAdapter(private val weatherDataList: MutableList<WeatherData>, private val unitViewM: UnitViewModel) :
     RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
     inner class WeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -23,6 +28,7 @@ class WeatherAdapter(private val weatherDataList: MutableList<WeatherData>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.weather_item, parent, false)
+        unitViewModel = unitViewM
         return WeatherViewHolder(itemView)
     }
 
@@ -30,12 +36,28 @@ class WeatherAdapter(private val weatherDataList: MutableList<WeatherData>) :
     override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
         val currentWeather = weatherDataList[position]
 
-        holder.temperatureTextView.text = currentWeather.temperature.toString() + "°"
-        holder.weatherIconImageView.setImageBitmap(currentWeather.weatherIconBitmap) //
+        val unit = unitViewModel.unit.value
+        val temperatureText = when (unit) {
+            "metric" -> "${currentWeather.temperature}°C"
+            "standard" -> "${currentWeather.temperature}K"
+            else -> "${currentWeather.temperature}°"
+        }
+        holder.temperatureTextView.text = temperatureText
+
+        holder.weatherIconImageView.setImageBitmap(currentWeather.weatherIconBitmap)
+
         holder.dateTextView.text = currentWeather.date
-        holder.feelsTextView.text = "Feels: "+ currentWeather.feels.toString() + "°"
-        holder.pressureTextView.text = "Pressure: " + currentWeather.pressure.toString() + "hPa"
+
+        val feelsText = when (unit) {
+            "metric" -> "Feels: ${currentWeather.feels}°C"
+            "standard" -> "Feels: ${currentWeather.feels}K"
+            else -> "Feels: ${currentWeather.feels}°"
+        }
+        holder.feelsTextView.text = feelsText
+
+        holder.pressureTextView.text = "Pressure: ${currentWeather.pressure}hPa"
     }
+
 
     override fun getItemCount(): Int {
         return weatherDataList.size

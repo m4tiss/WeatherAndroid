@@ -2,6 +2,7 @@ package com.example.weatherapp
 
 import UnitViewModel
 import WeatherData
+import WeatherDataForecast
 import WeatherViewModel
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -32,6 +33,7 @@ class FragmentTodayWeather : Fragment() {
     private lateinit var searchEditText: TextInputEditText
 
     private lateinit var weatherViewModel: WeatherViewModel
+    private lateinit var weatherForecastViewModel: WeatherForecastViewModel
     private lateinit var unitViewModel: UnitViewModel
 
     override fun onCreateView(
@@ -43,6 +45,7 @@ class FragmentTodayWeather : Fragment() {
 
         weatherViewModel = ViewModelProvider(requireActivity()).get(WeatherViewModel::class.java)
         unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
+        weatherForecastViewModel = ViewModelProvider(requireActivity()).get(WeatherForecastViewModel::class.java)
 
 
         temperatureTextView = view.findViewById(R.id.temperatureTextView)
@@ -61,15 +64,17 @@ class FragmentTodayWeather : Fragment() {
             weatherViewModel.updateCity(newCity)
             val unit = unitViewModel.unit.value ?: "metric"
             weatherViewModel.fetchWeather(unit)
+            weatherForecastViewModel.fetchWeatherForecast(newCity,unit)
         }
 
         unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->
             val currentUnit = unit ?: "metric"
+            val currentCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
             weatherViewModel.fetchWeather(currentUnit)
+            weatherForecastViewModel.fetchWeatherForecast(currentCity,currentUnit)
         })
 
         weatherViewModel.weatherData.observe(viewLifecycleOwner, Observer { weatherData ->
-            println("Weather Data Changed: $weatherData")
             displayWeatherData(weatherData)
         })
 

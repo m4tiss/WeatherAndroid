@@ -1,8 +1,7 @@
 package com.example.weatherapp
 
-import CityViewModel
 import UnitViewModel
-import WeatherData
+import WeatherPanel
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 private lateinit var unitViewModel: UnitViewModel
 
-class WeatherAdapter(private val weatherDataList: MutableList<WeatherData>, private val unitViewM: UnitViewModel) :
+class WeatherAdapter(private val weatherPanelList: MutableList<WeatherPanel>, private val unitViewM: UnitViewModel) :
     RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
     inner class WeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -34,7 +33,7 @@ class WeatherAdapter(private val weatherDataList: MutableList<WeatherData>, priv
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
-        val currentWeather = weatherDataList[position]
+        val currentWeather = weatherPanelList[position]
 
         val unit = unitViewModel.unit.value
         val temperatureText = when (unit) {
@@ -60,12 +59,12 @@ class WeatherAdapter(private val weatherDataList: MutableList<WeatherData>, priv
 
 
     override fun getItemCount(): Int {
-        return weatherDataList.size
+        return weatherPanelList.size
     }
 
-    fun setData(newWeatherDataList: List<WeatherData>) {
-        weatherDataList.clear()
-        weatherDataList.addAll(newWeatherDataList)
+    fun setData(newWeatherPanelList: List<WeatherPanel>) {
+        weatherPanelList.clear()
+        weatherPanelList.addAll(newWeatherPanelList)
         notifyDataSetChanged()
     }
 }

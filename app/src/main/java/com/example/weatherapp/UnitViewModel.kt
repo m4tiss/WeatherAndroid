@@ -13,5 +13,6 @@ class UnitViewModel : ViewModel() {
 
     fun setUnit(newUnit: String) {
         _unit.value = newUnit
+        println("Unit set to: $newUnit")
     }
 }

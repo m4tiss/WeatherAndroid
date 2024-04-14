@@ -8,15 +8,16 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class MyPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int {
-        return 4
+        return 5
     }
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> FragmentSettings()
-            1 -> FragmentTodayWeather()
-            2 -> FragmentAdvancedInfo()
-            3 -> FragmentNextDays()
+            1 -> FragmentFavouritesCities()
+            2 -> FragmentTodayWeather()
+            3 -> FragmentAdvancedInfo()
+            4 -> FragmentNextDays()
             else -> throw IllegalArgumentException("Invalid position: $position")
         }
     }

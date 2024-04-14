@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.viewPager)
         val adapter = MyPagerAdapter(this)
         viewPager.adapter = adapter
-        viewPager.setCurrentItem(1, false)
+        viewPager.setCurrentItem(2, false)
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {

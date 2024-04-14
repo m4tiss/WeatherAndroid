@@ -14,7 +14,7 @@
         android:textColor="@color/white"
         android:id="@+id/temperature"
         android:text="25°"
-        android:textSize="40sp"
+        android:textSize="32sp"
         android:gravity="center"/>
     <ImageView
         android:layout_width="0dp"

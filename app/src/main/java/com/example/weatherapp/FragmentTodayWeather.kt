@@ -63,14 +63,16 @@ class FragmentTodayWeather : Fragment() {
             val newCity = searchEditText.text.toString()
             weatherViewModel.updateCity(newCity)
             val unit = unitViewModel.unit.value ?: "metric"
-            weatherViewModel.fetchWeather(unit)
+            val context = requireContext()
+            weatherViewModel.fetchWeather(context,unit)
             weatherForecastViewModel.fetchWeatherForecast(newCity,unit)
         }
 
         unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->
             val currentUnit = unit ?: "metric"
             val currentCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
-            weatherViewModel.fetchWeather(currentUnit)
+            val context = requireContext()
+            weatherViewModel.fetchWeather(context,currentUnit)
             weatherForecastViewModel.fetchWeatherForecast(currentCity,currentUnit)
         })
 

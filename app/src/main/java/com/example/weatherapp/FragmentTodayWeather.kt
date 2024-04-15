@@ -1,5 +1,6 @@
 package com.example.weatherapp
 
+import FavouritesCitiesViewModel
 import UnitViewModel
 import WeatherData
 import WeatherDataForecast
@@ -31,10 +32,12 @@ class FragmentTodayWeather : Fragment() {
     private lateinit var timeTextView: TextView
     private lateinit var searchButton: Button
     private lateinit var searchEditText: TextInputEditText
+    private lateinit var heartImageView: ImageView
 
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var weatherForecastViewModel: WeatherForecastViewModel
     private lateinit var unitViewModel: UnitViewModel
+    private lateinit var favouritesCitiesViewModel: FavouritesCitiesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +49,7 @@ class FragmentTodayWeather : Fragment() {
         weatherViewModel = ViewModelProvider(requireActivity()).get(WeatherViewModel::class.java)
         unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
         weatherForecastViewModel = ViewModelProvider(requireActivity()).get(WeatherForecastViewModel::class.java)
+        favouritesCitiesViewModel = ViewModelProvider(requireActivity()).get(FavouritesCitiesViewModel::class.java)
 
 
         temperatureTextView = view.findViewById(R.id.temperatureTextView)
@@ -55,9 +59,11 @@ class FragmentTodayWeather : Fragment() {
         pressureTextView = view.findViewById(R.id.pressureTextView)
         timeTextView = view.findViewById(R.id.timeTextView)
         weatherImageView = view.findViewById(R.id.weatherImageView)
+        heartImageView =  view.findViewById(R.id.heartIcon)
 
         searchButton = view.findViewById(R.id.searchButton)
         searchEditText = view.findViewById(R.id.searchEditText)
+        favouritesCitiesViewModel.loadFavouriteCities(requireContext())
 
         searchButton.setOnClickListener {
             val newCity = searchEditText.text.toString()
@@ -77,8 +83,22 @@ class FragmentTodayWeather : Fragment() {
         })
 
         weatherViewModel.weatherData.observe(viewLifecycleOwner, Observer { weatherData ->
+
             displayWeatherData(weatherData)
         })
+
+        heartImageView.setOnClickListener {
+            val currentCity = cityTextView.text.toString()
+            if (isCityInFavourites(currentCity)) {
+                favouritesCitiesViewModel.removeFavouriteCity(requireContext(),currentCity)
+            } else {
+                favouritesCitiesViewModel.addFavouriteCity(requireContext(),currentCity)
+            }
+        }
+        favouritesCitiesViewModel.favouritesCities.observe(viewLifecycleOwner, Observer { favouriteCities ->
+            updateHeartIcon(cityTextView.text.toString())
+        })
+
 
         return view
     }
@@ -87,6 +107,7 @@ class FragmentTodayWeather : Fragment() {
     private fun displayWeatherData(weatherData: WeatherData?) {
         if (weatherData != null) {
             cityTextView.text = weatherData.city
+            updateHeartIcon(weatherData.city)
             if(unitViewModel.unit.value=="metric") temperatureTextView.text = "${weatherData.temperature.toInt()}°C"
             else temperatureTextView.text = "${weatherData.temperature.toInt()}K"
             coordinatesTextView.text = "Longitude: ${weatherData.longitude}, Latitude: ${weatherData.latitude}"
@@ -104,6 +125,18 @@ class FragmentTodayWeather : Fragment() {
             pressureTextView.text = "Pressure: -"
             timeTextView.text = "Local Time: -"
             weatherImageView.setImageResource(R.drawable.nodata)
+        }
+    }
+
+    private fun isCityInFavourites(city: String): Boolean {
+        return favouritesCitiesViewModel.favouritesCities.value?.contains(city) ?: false
+    }
+
+    private fun updateHeartIcon(city: String) {
+        if (isCityInFavourites(city)) {
+            heartImageView.setImageResource(R.drawable.heart)
+        } else {
+            heartImageView.setImageResource(R.drawable.noheart)
         }
     }
 

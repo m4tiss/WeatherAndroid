@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
@@ -28,7 +27,7 @@ class WeatherViewModel : ViewModel() {
         val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
         val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=${defaultCity}&appid=$apiKey&units=metric"
 
-        GlobalScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = URL(apiUrl).readText()
                 val weatherData = parseWeatherData(response)
@@ -45,7 +44,7 @@ class WeatherViewModel : ViewModel() {
         if (networkConnection.isNetworkAvailable()) {
 
             val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
-            val unit = "metric"
+            val unit = unit
 
             val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$defaultCity&appid=$apiKey&units=$unit"
 
@@ -58,6 +57,22 @@ class WeatherViewModel : ViewModel() {
 
                     saveWeatherDataToFile(context, defaultCity, weatherData)
                 } catch (e: IOException) {
+
+
+                    _weatherData.postValue(WeatherData(
+                        city = defaultCity,
+                        latitude = 0.0,
+                        longitude = 0.0,
+                        time = "-",
+                        temperature = 0.0,
+                        pressure = 0,
+                        description = "-",
+                        humidity = 0,
+                        windSpeed = 0.0,
+                        windDeg = 0,
+                        clouds = 0,
+                        visibility = 0
+                    ))
                     e.printStackTrace()
                 }
             }

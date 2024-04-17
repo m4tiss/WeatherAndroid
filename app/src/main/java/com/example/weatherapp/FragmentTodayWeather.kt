@@ -91,8 +91,14 @@ class FragmentTodayWeather : Fragment() {
             val currentCity = cityTextView.text.toString()
             if (isCityInFavourites(currentCity)) {
                 favouritesCitiesViewModel.removeFavouriteCity(requireContext(),currentCity)
+                weatherViewModel.weatherData.value?.let { weatherData ->
+                    weatherViewModel.deleteWeatherDataFile(requireContext(), currentCity)
+                }
             } else {
                 favouritesCitiesViewModel.addFavouriteCity(requireContext(),currentCity)
+                weatherViewModel.weatherData.value?.let { weatherData ->
+                    weatherViewModel.saveWeatherDataToFile(requireContext(), currentCity, weatherData)
+                }
             }
         }
         favouritesCitiesViewModel.favouritesCities.observe(viewLifecycleOwner, Observer { favouriteCities ->

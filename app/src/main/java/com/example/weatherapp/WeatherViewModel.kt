@@ -53,9 +53,6 @@ class WeatherViewModel : ViewModel() {
                     val response = URL(apiUrl).readText()
                     val weatherData = parseWeatherData(response)
                     _weatherData.postValue(weatherData)
-
-
-                    saveWeatherDataToFile(context, defaultCity, weatherData)
                 } catch (e: IOException) {
 
 
@@ -143,7 +140,7 @@ class WeatherViewModel : ViewModel() {
         return WeatherData(city, latitude, longitude, sdfTime, temperature, pressure, description, humidity, windSpeed, windDeg, cloudiness,visibility)
     }
 
-    private fun saveWeatherDataToFile(context: Context,city: String, weatherData: WeatherData) {
+    fun saveWeatherDataToFile(context: Context,city: String, weatherData: WeatherData) {
         val fileName = "${city}_today.json"
 
         val json = JSONObject().apply {
@@ -170,10 +167,26 @@ class WeatherViewModel : ViewModel() {
             }
         } catch (e: IOException) {
             e.printStackTrace()
+            }
         }
+    fun deleteWeatherDataFile(context: Context, city: String) {
+        val fileName = "${city}_today.json"
+        val fileDir = context.filesDir
+        val file = File(fileDir, fileName)
 
-
+        if (file.exists()) {
+            try {
+                file.delete()
+                println("Plik z danymi pogodowymi dla miasta $city został usunięty.")
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+                println("Błąd podczas usuwania pliku z danymi pogodowymi dla miasta $city: ${e.message}")
+            }
+        } else {
+            println("Plik z danymi pogodowymi dla miasta $city nie istnieje.")
         }
+    }
+
 
     private fun loadWeatherDataFromFile(context: Context, city: String): WeatherData {
         val fileName = "${city}_today.json"

@@ -7,5 +7,5 @@ data class WeatherDataForecast(
     val pressure: Int,
     val humidity: Int,
     val description: String,
-    val iconUrl: String
+    val icon: String
 )

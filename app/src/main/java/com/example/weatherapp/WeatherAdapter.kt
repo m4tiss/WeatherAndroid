@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 
@@ -43,7 +44,14 @@ class WeatherAdapter(private val weatherPanelList: MutableList<WeatherPanel>, pr
         }
         holder.temperatureTextView.text = temperatureText
 
-        holder.weatherIconImageView.setImageBitmap(currentWeather.weatherIconBitmap)
+        val iconResId = holder.itemView.context.resources.getIdentifier(
+            "icon_${currentWeather.icon}", "drawable", holder.itemView.context.packageName
+        )
+        if (iconResId != 0) {
+            holder.weatherIconImageView.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, iconResId))
+        } else {
+            holder.weatherIconImageView.setImageDrawable(null)
+        }
 
         holder.dateTextView.text = currentWeather.date
 

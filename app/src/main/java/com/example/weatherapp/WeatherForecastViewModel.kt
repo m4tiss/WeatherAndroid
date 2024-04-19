@@ -85,9 +85,8 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
                         val humidity = mainObj.getInt("humidity")
                         val description = weatherObj.getString("description")
                         val icon = weatherObj.getString("icon")
-                        val iconUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
 
-                        val weatherData = WeatherDataForecast(date, temperature, feelsLike, pressure, humidity, description, iconUrl)
+                        val weatherData = WeatherDataForecast(date, temperature, feelsLike, pressure, humidity, description, icon)
                         weatherDataList.add(weatherData)
                     }
                 }
@@ -114,7 +113,7 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
                 put("pressure", weatherData.pressure)
                 put("humidity", weatherData.humidity)
                 put("description", weatherData.description)
-                put("iconUrl", weatherData.iconUrl)
+                put("icon", weatherData.icon)
             }
             jsonArray.add(jsonObject)
         }
@@ -174,9 +173,9 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
                     val pressure = jsonObject.getInt("pressure")
                     val humidity = jsonObject.getInt("humidity")
                     val description = jsonObject.getString("description")
-                    val iconUrl = jsonObject.getString("iconUrl")
+                    val icon = jsonObject.getString("icon")
 
-                    val weatherData = WeatherDataForecast(dateTime, temperature, feelsLike, pressure, humidity, description, iconUrl)
+                    val weatherData = WeatherDataForecast(dateTime, temperature, feelsLike, pressure, humidity, description, icon)
                     weatherDataList.add(weatherData)
                 }
                 println(weatherDataList.size)

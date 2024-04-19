@@ -71,30 +71,24 @@ class FragmentNextDays : Fragment() {
 
     private fun displayWeatherDataForecast(forecastList: List<WeatherDataForecast>) {
         val weatherPanelList = mutableListOf<WeatherPanel>()
-        //val iconBitmap = null
         forecastList.forEach { weatherDataForecast ->
-//            GlobalScope.launch(Dispatchers.Main) {
-//                try {
-//                    iconBitmap = downloadBitmapFromUrl(weatherDataForecast.iconUrl)
-//                        } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
                     val formattedDate =
                         SimpleDateFormat("HH:mm dd-MM-yyyy", Locale.getDefault()).format(
                             weatherDataForecast.dateTime
                         )
                     val feelsLike = weatherDataForecast.feelsLike.toInt()
                     val pressure = weatherDataForecast.pressure
+                    val icon = weatherDataForecast.icon
+
 
                     val weatherPanel = WeatherPanel(
                         weatherDataForecast.temperature,
-                        null,
+                        icon,
                         formattedDate,
                         feelsLike,
                         pressure
                     )
                     weatherPanelList.add(weatherPanel)
-
                 if (weatherPanelList.size == forecastList.size) {
                     weatherPanelList.sortBy { it.date }
                     weatherAdapter.setData(weatherPanelList)
@@ -102,22 +96,6 @@ class FragmentNextDays : Fragment() {
             }
         }
     }
-
-
-
-private suspend fun downloadBitmapFromUrl(url: String): Bitmap? {
-    return withContext(Dispatchers.IO) {
-        try {
-            val connection = URL(url).openConnection()
-            connection.connect()
-            val inputStream = connection.getInputStream()
-            BitmapFactory.decodeStream(inputStream)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-}
 
 
 

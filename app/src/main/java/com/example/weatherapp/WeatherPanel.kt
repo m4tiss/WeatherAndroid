@@ -1,8 +1,9 @@
 import android.graphics.Bitmap
+import android.widget.ImageView
 
 data class WeatherPanel(
     val temperature: Int,
-    val weatherIconBitmap: Bitmap?,
+    val icon: String,
     val date: String,
     val feels: Int,
     val pressure: Int

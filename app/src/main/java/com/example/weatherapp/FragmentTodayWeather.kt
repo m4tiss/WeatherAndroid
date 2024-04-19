@@ -34,6 +34,7 @@ class FragmentTodayWeather : Fragment() {
     private lateinit var searchButton: Button
     private lateinit var searchEditText: TextInputEditText
     private lateinit var heartImageView: ImageView
+    private lateinit var refreshIcon: ImageView
 
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var weatherForecastViewModel: WeatherForecastViewModel
@@ -61,6 +62,7 @@ class FragmentTodayWeather : Fragment() {
         timeTextView = view.findViewById(R.id.timeTextView)
         weatherImageView = view.findViewById(R.id.weatherImageView)
         heartImageView =  view.findViewById(R.id.heartIcon)
+        refreshIcon =  view.findViewById(R.id.refreshIcon)
 
         searchButton = view.findViewById(R.id.searchButton)
         searchEditText = view.findViewById(R.id.searchEditText)
@@ -74,6 +76,13 @@ class FragmentTodayWeather : Fragment() {
             val context = requireContext()
             weatherViewModel.fetchWeather(context,unit)
             weatherForecastViewModel.fetchWeatherForecast(newCity,unit)
+        }
+        refreshIcon.setOnClickListener {
+            val unit = unitViewModel.unit.value ?: "metric"
+            val currentCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
+            val context = requireContext()
+            weatherViewModel.fetchWeather(context,unit)
+            weatherForecastViewModel.fetchWeatherForecast(currentCity,unit)
         }
 
         unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->

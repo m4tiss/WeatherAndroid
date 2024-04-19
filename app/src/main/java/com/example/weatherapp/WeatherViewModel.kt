@@ -1,4 +1,5 @@
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -73,6 +74,7 @@ class WeatherViewModel : ViewModel() {
                     e.printStackTrace()
                 }
             }
+            Toast.makeText(context, "Pobrano nowe dane!", Toast.LENGTH_SHORT).show()
         } else {
             val weatherData = loadWeatherDataFromFile(context,defaultCity)
             _weatherData.postValue(weatherData)
@@ -211,8 +213,7 @@ class WeatherViewModel : ViewModel() {
                     clouds = jsonObject.getInt("clouds"),
                     visibility = jsonObject.getInt("visibility")
                 )
-                println(weatherData.city)
-                println(weatherData.temperature)
+                Toast.makeText(context, "Brak połączenia z internetem!\nDane pobrane z pliku!", Toast.LENGTH_SHORT).show()
                 return weatherData
             } catch (e: IOException) {
                 e.printStackTrace()

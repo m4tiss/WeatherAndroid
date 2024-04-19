@@ -1,6 +1,7 @@
 package com.example.weatherapp
 
 import FavouritesCitiesViewModel
+import NetworkConnection
 import UnitViewModel
 import WeatherData
 import WeatherDataForecast
@@ -18,7 +19,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Locale
-
+import android.widget.Toast
 
 
 class FragmentTodayWeather : Fragment() {
@@ -75,15 +76,15 @@ class FragmentTodayWeather : Fragment() {
         }
 
         unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->
-            val currentUnit = unit ?: "metric"
-            val currentCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
-            val context = requireContext()
-            weatherViewModel.fetchWeather(context,currentUnit)
-            weatherForecastViewModel.fetchWeatherForecast(currentCity,currentUnit)
+
+                val currentUnit = unit ?: "metric"
+                val currentCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
+                val context = requireContext()
+                weatherViewModel.fetchWeather(context,currentUnit)
+                weatherForecastViewModel.fetchWeatherForecast(currentCity,currentUnit)
         })
 
         weatherViewModel.weatherData.observe(viewLifecycleOwner, Observer { weatherData ->
-
             displayWeatherData(weatherData)
         })
 
@@ -98,6 +99,7 @@ class FragmentTodayWeather : Fragment() {
                 favouritesCitiesViewModel.addFavouriteCity(requireContext(),currentCity)
                 weatherViewModel.weatherData.value?.let { weatherData ->
                     weatherViewModel.saveWeatherDataToFile(requireContext(), currentCity, weatherData)
+                    Toast.makeText(requireContext(), "Miasto zostało dodane!", Toast.LENGTH_SHORT).show()
                 }
             }
         }

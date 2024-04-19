@@ -9,8 +9,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +24,7 @@ class FragmentSettings : Fragment() {
     private lateinit var unitRadioGroup: RadioGroup
     private lateinit var kelvinRadioButton: RadioButton
     private lateinit var celsiusRadioButton: RadioButton
+    private lateinit var refreshTime: Spinner
     private lateinit var unitViewModel: UnitViewModel
     private lateinit var weatherViewModel: WeatherViewModel
 
@@ -34,7 +38,13 @@ class FragmentSettings : Fragment() {
         unitRadioGroup = view.findViewById(R.id.unitRadioGroup)
         kelvinRadioButton = view.findViewById(R.id.kelvinRadioButton)
         celsiusRadioButton = view.findViewById(R.id.celsiusRadioButton)
+        refreshTime = view.findViewById(R.id.refreshTime)
 
+        val refreshOptions = listOf("5 seconds", "10 seconds", "30 seconds", "1 minute")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, refreshOptions)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        refreshTime.adapter = adapter
 
         unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
         weatherViewModel = ViewModelProvider(requireActivity()).get(WeatherViewModel::class.java)
@@ -72,6 +82,24 @@ class FragmentSettings : Fragment() {
                         }
                     }
                 }
+            }
+        }
+
+        refreshTime.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedOption = refreshOptions[position]
+                val fetchIntervalMillis = when (selectedOption) {
+                    "5 seconds" -> 5000L
+                    "10 seconds" -> 10000L
+                    "30 seconds" -> 30000L
+                    "1 minute" -> 60000L
+                    else -> 0L
+                }
+
+                weatherViewModel.setFetchIntervalMillis(fetchIntervalMillis)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
 

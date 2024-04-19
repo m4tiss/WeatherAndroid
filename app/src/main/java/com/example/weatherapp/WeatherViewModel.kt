@@ -1,6 +1,7 @@
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.os.Handler
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,10 +30,33 @@ class WeatherViewModel(application: Application, unitViewM: UnitViewModel) : Vie
         get() = _weatherData
 
 
+    private var fetchIntervalMillis = 8000L
+    private var shouldFetchData = true
+    private var timer: Timer? = null
+
     init {
         unitViewModel  = unitViewM
-        fetchWeather()
+        startFetchingWeather()
     }
+
+    private fun startFetchingWeather() {
+        timer = Timer()
+        timer?.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                if (shouldFetchData) {
+                    fetchWeather()
+                }
+            }
+        }, 0, fetchIntervalMillis)
+    }
+
+    fun setFetchIntervalMillis(intervalMillis: Long) {
+        fetchIntervalMillis = intervalMillis
+        timer?.cancel()
+        timer = null
+        startFetchingWeather()
+    }
+
 
     fun fetchWeather() {
         val defaultCity = _weatherData.value?.city ?: "Warsaw"
@@ -68,7 +92,9 @@ class WeatherViewModel(application: Application, unitViewM: UnitViewModel) : Vie
                     e.printStackTrace()
                 }
             }
-            Toast.makeText(context, "Pobrano nowe dane!", Toast.LENGTH_SHORT).show()
+            Handler(context.mainLooper).post {
+                Toast.makeText(context, "Dane zostały odświeżone!", Toast.LENGTH_SHORT).show()
+            }
         } else {
             val weatherData = loadWeatherDataFromFile(defaultCity)
             _weatherData.postValue(weatherData)
@@ -222,7 +248,9 @@ class WeatherViewModel(application: Application, unitViewM: UnitViewModel) : Vie
                     clouds = jsonObject.getInt("clouds"),
                     visibility = jsonObject.getInt("visibility")
                 )
-                Toast.makeText(context, "Brak połączenia z internetem!\nDane pobrane z pliku!", Toast.LENGTH_SHORT).show()
+                Handler(context.mainLooper).post {
+                    Toast.makeText(context, "Brak połączenia z internetem!\nDane pobrane z pliku!", Toast.LENGTH_SHORT).show()
+                }
                 return weatherData
             } catch (e: IOException) {
                 e.printStackTrace()

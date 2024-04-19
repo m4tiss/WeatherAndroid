@@ -7,6 +7,7 @@ import WeatherData
 import WeatherDataForecast
 import WeatherViewModel
 import android.annotation.SuppressLint
+import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -48,8 +49,8 @@ class FragmentTodayWeather : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_today_weather, container, false)
 
-        weatherViewModel = ViewModelProvider(requireActivity()).get(WeatherViewModel::class.java)
         unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
+        weatherViewModel = ViewModelProvider(requireActivity(), WeatherViewModelFactory(requireActivity().application, unitViewModel)).get(WeatherViewModel::class.java)
         weatherForecastViewModel = ViewModelProvider(requireActivity()).get(WeatherForecastViewModel::class.java)
         favouritesCitiesViewModel = ViewModelProvider(requireActivity()).get(FavouritesCitiesViewModel::class.java)
 
@@ -74,14 +75,14 @@ class FragmentTodayWeather : Fragment() {
             weatherViewModel.updateCity(newCity)
             val unit = unitViewModel.unit.value ?: "metric"
             val context = requireContext()
-            weatherViewModel.fetchWeather(context,unit)
+            weatherViewModel.fetchWeather()
             weatherForecastViewModel.fetchWeatherForecast(newCity,unit)
         }
         refreshIcon.setOnClickListener {
             val unit = unitViewModel.unit.value ?: "metric"
             val currentCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
             val context = requireContext()
-            weatherViewModel.fetchWeather(context,unit)
+            weatherViewModel.fetchWeather()
             weatherForecastViewModel.fetchWeatherForecast(currentCity,unit)
         }
 
@@ -92,7 +93,7 @@ class FragmentTodayWeather : Fragment() {
                 println(weatherViewModel.weatherData.value?.temperature)
                 val currentCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
                 val context = requireContext()
-                weatherViewModel.fetchWeather(context,currentUnit)
+                weatherViewModel.fetchWeather()
                 weatherForecastViewModel.fetchWeatherForecast(currentCity,currentUnit)
             }
         })
@@ -106,12 +107,12 @@ class FragmentTodayWeather : Fragment() {
             if (isCityInFavourites(currentCity)) {
                 favouritesCitiesViewModel.removeFavouriteCity(requireContext(),currentCity)
                 weatherViewModel.weatherData.value?.let { weatherData ->
-                    weatherViewModel.deleteWeatherDataFile(requireContext(), currentCity)
+                    weatherViewModel.deleteWeatherDataFile(currentCity)
                 }
             } else {
                 favouritesCitiesViewModel.addFavouriteCity(requireContext(),currentCity)
                 weatherViewModel.weatherData.value?.let { weatherData ->
-                    weatherViewModel.saveWeatherDataToFile(requireContext(), currentCity, weatherData)
+                    weatherViewModel.saveWeatherDataToFile(currentCity, weatherData)
                     Toast.makeText(requireContext(), "Miasto zostało dodane!", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -119,12 +120,6 @@ class FragmentTodayWeather : Fragment() {
         favouritesCitiesViewModel.favouritesCities.observe(viewLifecycleOwner, Observer { favouriteCities ->
             updateHeartIcon(cityTextView.text.toString())
         })
-
-        val defaultCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
-        val currentUnit = unitViewModel.unit.value?: "metric"
-        weatherViewModel.fetchWeather(requireContext(),defaultCity)
-        weatherForecastViewModel.fetchWeatherForecast(defaultCity,currentUnit)
-
 
         return view
     }

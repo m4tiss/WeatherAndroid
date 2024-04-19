@@ -1,5 +1,6 @@
+import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
-import android.health.connect.datatypes.units.Temperature
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,37 +18,29 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class WeatherViewModel : ViewModel() {
+class WeatherViewModel(application: Application, unitViewM: UnitViewModel) : ViewModel() {
 
     private val _weatherData = MutableLiveData<WeatherData>()
+    private var unitViewModel: UnitViewModel
+
+    @SuppressLint("StaticFieldLeak")
+    private val context: Context = application.applicationContext
     val weatherData: LiveData<WeatherData>
         get() = _weatherData
 
 
     init {
-        val defaultCity = _weatherData.value?.city ?: "Warsaw"
-        val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
-        val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=${defaultCity}&appid=$apiKey&units=metric"
-
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = URL(apiUrl).readText()
-                val weatherData = parseWeatherData(response)
-                _weatherData.postValue(weatherData)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
+        unitViewModel  = unitViewM
+        fetchWeather()
     }
 
-    fun fetchWeather(context: Context, unit: String) {
+    fun fetchWeather() {
         val defaultCity = _weatherData.value?.city ?: "Warsaw"
         val networkConnection = NetworkConnection(context)
         if (networkConnection.isNetworkAvailable()) {
 
             val apiKey = "faefbb6cd2775b6c28ba6c3a080ead31"
-            val unit = unit
-
+            val unit = unitViewModel.unit.value
             val apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=$defaultCity&appid=$apiKey&units=$unit"
 
             viewModelScope.launch(Dispatchers.IO) {
@@ -77,7 +70,7 @@ class WeatherViewModel : ViewModel() {
             }
             Toast.makeText(context, "Pobrano nowe dane!", Toast.LENGTH_SHORT).show()
         } else {
-            val weatherData = loadWeatherDataFromFile(context,defaultCity)
+            val weatherData = loadWeatherDataFromFile(defaultCity)
             _weatherData.postValue(weatherData)
         }
     }
@@ -99,11 +92,9 @@ class WeatherViewModel : ViewModel() {
                 currentWeatherData.clouds,
                 currentWeatherData.visibility
             )
-            //_weatherData.value = updatedWeatherData
-            _weatherData.postValue(updatedWeatherData)
+            _weatherData.value = updatedWeatherData
         }
     }
-
     fun updateTemperature(newTemperature: Double) {
         val currentWeatherData = _weatherData.value
         if (currentWeatherData != null) {
@@ -124,8 +115,6 @@ class WeatherViewModel : ViewModel() {
             _weatherData.postValue(updatedWeatherData)
         }
     }
-
-
     private fun parseWeatherData(jsonString: String): WeatherData {
         val jsonObject = JSONObject(jsonString)
 
@@ -164,8 +153,7 @@ class WeatherViewModel : ViewModel() {
 
         return WeatherData(city, latitude, longitude, sdfTime, temperature, pressure, description, humidity, windSpeed, windDeg, cloudiness,visibility)
     }
-
-    fun saveWeatherDataToFile(context: Context,city: String, weatherData: WeatherData) {
+    fun saveWeatherDataToFile(city: String, weatherData: WeatherData) {
         val fileName = "${city}_today.json"
 
         val json = JSONObject().apply {
@@ -194,7 +182,7 @@ class WeatherViewModel : ViewModel() {
             e.printStackTrace()
             }
         }
-    fun deleteWeatherDataFile(context: Context, city: String) {
+    fun deleteWeatherDataFile(city: String) {
         val fileName = "${city}_today.json"
         val fileDir = context.filesDir
         val file = File(fileDir, fileName)
@@ -211,9 +199,7 @@ class WeatherViewModel : ViewModel() {
             println("Plik z danymi pogodowymi dla miasta $city nie istnieje.")
         }
     }
-
-
-    private fun loadWeatherDataFromFile(context: Context, city: String): WeatherData {
+    private fun loadWeatherDataFromFile(city: String): WeatherData {
         val fileName = "${city}_today.json"
         val file = File(context.filesDir, fileName)
 

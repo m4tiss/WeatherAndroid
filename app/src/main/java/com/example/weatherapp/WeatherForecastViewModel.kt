@@ -53,9 +53,6 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
                     e.printStackTrace()
                 }
             }
-            Handler(context.mainLooper).post {
-                Toast.makeText(context, "Dane zostały odświeżone!", Toast.LENGTH_SHORT).show()
-            }
             saveWeatherForecastToFile(city)
         } else {
             _weatherForecast.postValue(loadWeatherForecastFromFile(city))
@@ -155,6 +152,7 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
     }
     private fun loadWeatherForecastFromFile(city: String): List<WeatherDataForecast> {
         val fileName = "${city}_forecast.json"
+        println(city)
         val file = File(context.filesDir, fileName)
 
         println("Jest taki plik")

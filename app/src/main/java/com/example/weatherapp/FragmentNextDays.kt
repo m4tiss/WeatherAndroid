@@ -50,6 +50,12 @@ class FragmentNextDays : Fragment() {
         weatherAdapter = WeatherAdapter(mutableListOf(), unitViewModel)
         recyclerView.adapter = weatherAdapter
 
+
+        weatherViewModel.weatherData.observe(viewLifecycleOwner, Observer { weatherData ->
+            val unit = unitViewModel.unit.value ?: "metric"
+            weatherForecastViewModel.fetchWeatherForecast(weatherData.city,unit)
+        })
+
         weatherForecastViewModel.weatherForecast.observe(
             viewLifecycleOwner,
             Observer { weatherForecast ->

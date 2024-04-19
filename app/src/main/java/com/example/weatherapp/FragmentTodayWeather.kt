@@ -109,12 +109,19 @@ class FragmentTodayWeather : Fragment() {
                 weatherViewModel.weatherData.value?.let { weatherData ->
                     weatherViewModel.deleteWeatherDataFile(currentCity)
                 }
+                weatherForecastViewModel.weatherForecast.value?.let{ weatherDataForecast ->
+                    weatherForecastViewModel.deleteWeatherForecastFile(currentCity)
+                }
+
             } else {
                 favouritesCitiesViewModel.addFavouriteCity(requireContext(),currentCity)
                 weatherViewModel.weatherData.value?.let { weatherData ->
                     weatherViewModel.saveWeatherDataToFile(currentCity, weatherData)
-                    Toast.makeText(requireContext(), "Miasto zostało dodane!", Toast.LENGTH_SHORT).show()
                 }
+                weatherForecastViewModel.weatherForecast.value?.let{ weatherDataForecast ->
+                    weatherForecastViewModel.saveWeatherForecastToFile(currentCity)
+                }
+                Toast.makeText(requireContext(), "Miasto zostało dodane!", Toast.LENGTH_SHORT).show()
             }
         }
         favouritesCitiesViewModel.favouritesCities.observe(viewLifecycleOwner, Observer { favouriteCities ->

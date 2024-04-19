@@ -51,9 +51,9 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
                     handleResponse(response)
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    _weatherForecast.postValue(emptyList())
                 }
             }
-            saveWeatherForecastToFile(city)
         } else {
             _weatherForecast.postValue(loadWeatherForecastFromFile(city))
         }
@@ -99,7 +99,7 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
     }
 
 
-    private fun saveWeatherForecastToFile(city: String) {
+     fun saveWeatherForecastToFile(city: String) {
         val fileName = "${city}_forecast.json"
         val weatherDataList = _weatherForecast.value ?: return
 
@@ -149,7 +149,7 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
             println("Plik z danymi pogodowymi dla miasta $city nie istnieje.")
         }
     }
-    private fun loadWeatherForecastFromFile(city: String): List<WeatherDataForecast> {
+     private fun loadWeatherForecastFromFile(city: String): List<WeatherDataForecast> {
         val fileName = "${city}_forecast.json"
         println(city)
         val file = File(context.filesDir, fileName)
@@ -186,6 +186,7 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
                 e.printStackTrace()
             }
         }
+         println("Zwracam pustą liste")
         return emptyList()
     }
 

@@ -5,7 +5,7 @@ data class WeatherData(
     val latitude : Double,
     val longitude : Double,
     val time : String,
-    val temperature : Double,
+    var temperature : Double,
     val pressure : Int,
     val description : String,
     val humidity : Int,

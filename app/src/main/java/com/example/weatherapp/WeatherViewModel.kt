@@ -1,4 +1,5 @@
 import android.content.Context
+import android.health.connect.datatypes.units.Temperature
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -98,7 +99,29 @@ class WeatherViewModel : ViewModel() {
                 currentWeatherData.clouds,
                 currentWeatherData.visibility
             )
-            _weatherData.value = updatedWeatherData
+            //_weatherData.value = updatedWeatherData
+            _weatherData.postValue(updatedWeatherData)
+        }
+    }
+
+    fun updateTemperature(newTemperature: Double) {
+        val currentWeatherData = _weatherData.value
+        if (currentWeatherData != null) {
+            val updatedWeatherData = WeatherData(
+                currentWeatherData.city,
+                currentWeatherData.latitude,
+                currentWeatherData.longitude,
+                currentWeatherData.time,
+                newTemperature,
+                currentWeatherData.pressure,
+                currentWeatherData.description,
+                currentWeatherData.humidity,
+                currentWeatherData.windSpeed,
+                currentWeatherData.windDeg,
+                currentWeatherData.clouds,
+                currentWeatherData.visibility
+            )
+            _weatherData.postValue(updatedWeatherData)
         }
     }
 

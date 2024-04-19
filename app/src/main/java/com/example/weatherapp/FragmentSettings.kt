@@ -1,5 +1,6 @@
 package com.example.weatherapp
 
+import NetworkConnection
 import UnitViewModel
 import WeatherViewModel
 import android.content.Context
@@ -21,6 +22,7 @@ class FragmentSettings : Fragment() {
     private lateinit var kelvinRadioButton: RadioButton
     private lateinit var celsiusRadioButton: RadioButton
     private lateinit var unitViewModel: UnitViewModel
+    private lateinit var weatherViewModel: WeatherViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +37,7 @@ class FragmentSettings : Fragment() {
 
 
         unitViewModel = ViewModelProvider(requireActivity()).get(UnitViewModel::class.java)
+        weatherViewModel = ViewModelProvider(requireActivity()).get(WeatherViewModel::class.java)
 
         unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->
             if (unit == "standard") {
@@ -45,12 +48,29 @@ class FragmentSettings : Fragment() {
         })
 
         unitRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            val networkConnection = NetworkConnection(requireContext())
+
             when (checkedId) {
                 R.id.kelvinRadioButton -> {
+                    if(unitViewModel.unit.value!="standard"){
                     unitViewModel.setUnit("standard")
+                    if (!networkConnection.isNetworkAvailable()) {
+                        val currentTemperature = weatherViewModel.weatherData.value?.temperature ?: 0.0
+                        val newTemperature = currentTemperature + 273
+                        weatherViewModel.updateTemperature(newTemperature)
+                        }
+                    }
                 }
                 R.id.celsiusRadioButton -> {
-                    unitViewModel.setUnit("metric")
+                    if(unitViewModel.unit.value!="metric") {
+                        unitViewModel.setUnit("metric")
+                        if (!networkConnection.isNetworkAvailable()) {
+                            val currentTemperature =
+                                weatherViewModel.weatherData.value?.temperature ?: 0.0
+                            val newTemperature = currentTemperature - 273
+                            weatherViewModel.updateTemperature(newTemperature)
+                        }
+                    }
                 }
             }
         }

@@ -65,6 +65,7 @@ class FragmentTodayWeather : Fragment() {
         searchButton = view.findViewById(R.id.searchButton)
         searchEditText = view.findViewById(R.id.searchEditText)
         favouritesCitiesViewModel.loadFavouriteCities(requireContext())
+        unitViewModel.setUnit("metric")
 
         searchButton.setOnClickListener {
             val newCity = searchEditText.text.toString()
@@ -76,12 +77,15 @@ class FragmentTodayWeather : Fragment() {
         }
 
         unitViewModel.unit.observe(viewLifecycleOwner, Observer { unit ->
-
+            val networkConnection = NetworkConnection(requireContext())
+            if (networkConnection.isNetworkAvailable()) {
                 val currentUnit = unit ?: "metric"
+                println(weatherViewModel.weatherData.value?.temperature)
                 val currentCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
                 val context = requireContext()
                 weatherViewModel.fetchWeather(context,currentUnit)
                 weatherForecastViewModel.fetchWeatherForecast(currentCity,currentUnit)
+            }
         })
 
         weatherViewModel.weatherData.observe(viewLifecycleOwner, Observer { weatherData ->
@@ -106,6 +110,11 @@ class FragmentTodayWeather : Fragment() {
         favouritesCitiesViewModel.favouritesCities.observe(viewLifecycleOwner, Observer { favouriteCities ->
             updateHeartIcon(cityTextView.text.toString())
         })
+
+        val defaultCity = weatherViewModel.weatherData.value?.city ?: "Warsaw"
+        val currentUnit = unitViewModel.unit.value?: "metric"
+        weatherViewModel.fetchWeather(requireContext(),defaultCity)
+        weatherForecastViewModel.fetchWeatherForecast(defaultCity,currentUnit)
 
 
         return view

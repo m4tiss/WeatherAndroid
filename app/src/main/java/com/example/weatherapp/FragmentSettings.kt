@@ -3,8 +3,6 @@ package com.example.weatherapp
 import NetworkConnection
 import UnitViewModel
 import WeatherViewModel
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +15,6 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 
 class FragmentSettings : Fragment() {
 

@@ -5,8 +5,6 @@ import WeatherDataForecast
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.os.Handler
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -102,7 +100,6 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
      fun saveWeatherForecastToFile(city: String) {
         val fileName = "${city}_forecast.json"
         val weatherDataList = _weatherForecast.value ?: return
-
         val jsonArray = mutableListOf<JSONObject>()
 
         for (weatherData in weatherDataList) {
@@ -120,7 +117,6 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
 
         val fileDir = context.filesDir
         val file = File(fileDir, fileName)
-
         try {
             FileWriter(file).use { fileWriter ->
                 fileWriter.write(jsonArray.toString())
@@ -136,7 +132,6 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
         val fileName = "${city}_forecast.json"
         val fileDir = context.filesDir
         val file = File(fileDir, fileName)
-
         if (file.exists()) {
             try {
                 file.delete()
@@ -153,7 +148,6 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
         val fileName = "${city}_forecast.json"
         println(city)
         val file = File(context.filesDir, fileName)
-
         println("Jest taki plik")
         if (file.exists()) {
             try {
@@ -164,17 +158,14 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
 
                 for (i in 0 until jsonArray.length()) {
                     val jsonObject = jsonArray.getJSONObject(i)
-
                     val dateTimeString = jsonObject.getString("dateTime")
                     val dateTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dateTimeString)
-
                     val temperature = jsonObject.getInt("temperature")
                     val feelsLike = jsonObject.getDouble("feelsLike")
                     val pressure = jsonObject.getInt("pressure")
                     val humidity = jsonObject.getInt("humidity")
                     val description = jsonObject.getString("description")
                     val icon = jsonObject.getString("icon")
-
                     val weatherData = WeatherDataForecast(dateTime, temperature, feelsLike, pressure, humidity, description, icon)
                     weatherDataList.add(weatherData)
                 }
@@ -189,5 +180,4 @@ class WeatherForecastViewModel(application: Application) : ViewModel() {
          println("Zwracam pustą liste")
         return emptyList()
     }
-
 }

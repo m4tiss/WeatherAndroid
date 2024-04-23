@@ -4,10 +4,8 @@ import FavouritesCitiesViewModel
 import NetworkConnection
 import UnitViewModel
 import WeatherData
-import WeatherDataForecast
 import WeatherViewModel
 import android.annotation.SuppressLint
-import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

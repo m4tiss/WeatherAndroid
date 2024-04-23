@@ -12,9 +12,9 @@ class MyPagerAdapterTablet(fragmentActivity: FragmentActivity) : FragmentStateAd
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> FragmentSettings()
-            1 -> FragmentFavouritesCities()
-            2 -> FragmentTodayWeather()
+            0 -> FragmentSettingsTablet()
+            1 -> FragmentTodayWeatherTablet()
+            2 -> FragmentNextDays()
             else -> throw IllegalArgumentException("Invalid position: $position")
         }
     }
